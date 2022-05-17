@@ -1,20 +1,15 @@
 package com.garthskidstuff.drake.ui.main
 
-import com.garthskidstuff.drake.ui.base.BaseViewModel
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class MainViewModel : BaseViewModel<MainContract.Event, MainContract.Model, MainContract.Effect>() {
+class MainViewModel : ViewModel() {
 
-    override fun createInitialState(): MainContract.Model {
-        val contract = MainContract()
-        return contract.initialModel
-    }
+    private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(UIState.Idle)
+    val uiState = _uiState.asStateFlow()
 
-    /**
-     * Handle each event
-     */
-    override fun handleEvent(event: MainContract.Event) {
-        if (event is MainContract.Event.OnScreenTapped) {
-            //TODO
-        }
+    fun tryUpdate(expect: UIState, update: UIState): Boolean {
+        return _uiState.compareAndSet(expect, update)
     }
 }
