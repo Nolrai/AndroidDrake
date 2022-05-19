@@ -31,17 +31,17 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         surfaceView = view.findViewById<SurfaceView>(R.id.surfaceView)
         val holder = surfaceView.holder
-        holder.setFixedSize(20000, 20000)
+        holder.setFixedSize(2000, 2000)
 //        surfaceView.setOnClickListener(this)
-//        surfaceView.holder.addCallback(this)
+        surfaceView.holder.addCallback(this)
         MainScope().launch {
             val state = viewModel.uiState
             isSurfaceDestroyed = false
 
             state.collect {
                 val canvas = holder.lockCanvas(null)
-                it.draw(canvas, requireContext())
-                if (!isSurfaceDestroyed && !holder.isCreating) {
+                if (canvas != null) {
+                    it.draw(canvas, requireContext())
                     holder.unlockCanvasAndPost(canvas)
                 }
             }
@@ -60,11 +60,19 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
     private var isSurfaceDestroyed: Boolean = false
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-
+        val canvas = holder.lockCanvas(null)
+        if (canvas != null) {
+            viewModel.uiState.value.draw(canvas, requireContext())
+            holder.unlockCanvasAndPost(canvas)
+        }
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, pixelFormat: Int, p2: Int, p3: Int) {
-//        holder.setFixedSize(p2,p3)
+        val canvas = holder.lockCanvas(null)
+        if (canvas != null) {
+            viewModel.uiState.value.draw(canvas, requireContext())
+            holder.unlockCanvasAndPost(canvas)
+        }
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
