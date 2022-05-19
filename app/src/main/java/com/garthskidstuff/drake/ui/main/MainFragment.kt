@@ -32,7 +32,7 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
         surfaceView = view.findViewById<SurfaceView>(R.id.surfaceView)
         val holder = surfaceView.holder
         holder.setFixedSize(2000, 2000)
-//        surfaceView.setOnClickListener(this)
+        surfaceView.setOnClickListener(this)
         surfaceView.holder.addCallback(this)
         MainScope().launch {
             val state = viewModel.uiState
