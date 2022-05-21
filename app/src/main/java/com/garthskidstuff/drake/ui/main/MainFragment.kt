@@ -33,7 +33,7 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
         val holder = surfaceView.holder
 
         val width = activity?.windowManager?.currentWindowMetrics?.bounds?.width() ?: 2000
-        holder.setFixedSize(width, width * 5)
+        holder.setFixedSize(width, width * 5 /*todo: figure out how to set this per file */)
 
         surfaceView.setOnClickListener(this)
         surfaceView.holder.addCallback(this)
