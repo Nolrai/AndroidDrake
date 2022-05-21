@@ -31,7 +31,10 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         surfaceView = view.findViewById<SurfaceView>(R.id.surfaceView)
         val holder = surfaceView.holder
-        holder.setFixedSize(2000, 2000)
+
+        val width = activity?.windowManager?.currentWindowMetrics?.bounds?.width() ?: 2000
+        holder.setFixedSize(width, width * 5)
+
         surfaceView.setOnClickListener(this)
         surfaceView.holder.addCallback(this)
         MainScope().launch {
@@ -78,6 +81,5 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         isSurfaceDestroyed = true
     }
-
 
 }

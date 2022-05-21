@@ -31,7 +31,7 @@ sealed class UIState {
                 val paint = Paint()
                 paint.color = context.getColor(black)
                 paint.style = Style.STROKE
-                canvas?.drawRoundRect(rect, 10.0f, 20.0f, Paint())
+                canvas?.drawRoundRect(rect, 20.0f, 20.0f, Paint())
             }
         }
     }
