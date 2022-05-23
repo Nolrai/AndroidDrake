@@ -1,11 +1,14 @@
 package com.garthskidstuff.drake.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.garthskidstuff.drake.R
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
@@ -37,23 +40,39 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
 
         surfaceView.setOnClickListener(this)
         surfaceView.holder.addCallback(this)
-        MainScope().launch {
-            val state = viewModel.uiState
-            isSurfaceDestroyed = false
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                isSurfaceDestroyed = false
 
-            state.collect {
-                val canvas = holder.lockCanvas(null)
-                if (canvas != null) {
-                    it.draw(canvas, requireContext())
-                    holder.unlockCanvasAndPost(canvas)
+                viewModel.uiState.collect {
+                    // Draw
+                    val canvas = holder.lockCanvas(null)
+                    if (canvas != null) {
+                        it.draw(canvas, requireContext())
+                        holder.unlockCanvasAndPost(canvas)
+                    }
+
+                    //Save
+                    val stream = requireContext().openFileOutput("state.txt", Context.MODE_PRIVATE)
+                    stream.write(it.encodeToByteArray())
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvent.collect {
+                    it.show(requireContext())
+                }
+            }
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel.pushAction(UIAction.Load())
     }
 
     override fun onClick(view: View?) {
