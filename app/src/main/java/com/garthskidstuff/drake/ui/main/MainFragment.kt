@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 
 // This gets new states from the
 
-class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
+class MainFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
+    SurfaceHolder.Callback {
 
     companion object {
         fun newInstance() = MainFragment()
@@ -39,6 +40,7 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
         holder.setFixedSize(width, width * 5 /*todo: figure out how to set this per file */)
 
         surfaceView.setOnClickListener(this)
+        surfaceView.setOnLongClickListener(this)
         surfaceView.holder.addCallback(this)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -77,6 +79,11 @@ class MainFragment : Fragment(), View.OnClickListener, SurfaceHolder.Callback {
 
     override fun onClick(view: View?) {
         viewModel.pushAction(UIAction.Click)
+    }
+
+    override fun onLongClick(view: View?): Boolean {
+        viewModel.pushAction(UIAction.LongClick)
+        return true
     }
 
     private var isSurfaceDestroyed: Boolean = false

@@ -17,6 +17,15 @@ sealed class UIAction {
         }
     }
 
+    object LongClick : UIAction() {
+        override fun runAction(viewModel: MainViewModel, context: Context): UIState {
+            return when (viewModel.uiState.value) {
+                is UIState.Idle -> UIState.DisplayDiagram(Diagram())
+                is UIState.DisplayDiagram -> UIState.DisplayDiagram(Diagram())
+            }
+        }
+    }
+
     class Load(private val name: String? = null) : UIAction() {
         override fun runAction(viewModel: MainViewModel, context: Context): UIState {
             val seq = context.filesDir.walkTopDown()
